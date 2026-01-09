@@ -1,6 +1,6 @@
-# Mammoth CMS
+# TIPC Admin System
 
-A modern Content Management System built with Next.js, Prisma, and PostgreSQL.
+A modern Article Management System built with Next.js, Prisma, and PostgreSQL for TIPC (Taiwan Indigenous People Cultural Park).
 
 ## Quick Setup
 
@@ -11,11 +11,11 @@ npm install
 
 ### 2. Configure Environment Variables
 
-Copy `.env.example` to `.env` and fill in your credentials:
+Create a `.env` file in the root directory:
 
 ```env
 # Database
-DATABASE_URL="postgresql://user:password@localhost:5432/dbname"
+DATABASE_URL="postgresql://username:password@localhost:5432/tipc"
 
 # Cloudinary (Required for image uploads)
 CLOUDINARY_CLOUD_NAME="your_cloud_name"
@@ -27,8 +27,14 @@ CLOUDINARY_API_SECRET="your_api_secret"
 
 ### 3. Setup Database
 ```bash
+# Run migrations
 npx prisma migrate dev
-npx tsx scripts/seed-nine-blocks.ts  # Seed initial data
+
+# Seed initial data
+npx tsx scripts/seed-nine-blocks.ts
+
+# Create test user (optional)
+npx tsx scripts/create-test-user.ts
 ```
 
 ### 4. Run Development Server
@@ -36,7 +42,7 @@ npx tsx scripts/seed-nine-blocks.ts  # Seed initial data
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to see the application.
+Open [http://localhost:3000](http://localhost:3000) - you'll be redirected to the login page.
 
 ## Features
 
@@ -69,40 +75,55 @@ Open [http://localhost:3000](http://localhost:3000) to see the application.
 ## Project Structure
 
 ```
-mammoth/
+TIPC_adminSystem/
 ├── app/
-│   ├── api/              # API routes
-│   │   ├── articles/     # Article CRUD
-│   │   ├── auth/         # Authentication
-│   │   ├── metadata/     # Metadata fetching
-│   │   └── upload-image/ # Cloudinary image upload
-│   ├── dashboard/        # Admin dashboard
-│   └── login/            # Login page
+│   ├── api/                    # API routes
+│   │   ├── articles/           # Article CRUD operations
+│   │   ├── auth/login/         # User authentication
+│   │   ├── keywords/search/    # Keyword search
+│   │   ├── metadata/           # Metadata fetching
+│   │   └── upload-image/       # Cloudinary image upload
+│   ├── dashboard/              # Admin dashboard
+│   │   ├── upload/article/     # Article creation page
+│   │   └── update/article/[id] # Article editing page
+│   └── login/                  # Login page
 ├── lib/
-│   ├── cloudinary.ts     # Cloudinary configuration
-│   ├── prisma.ts         # Prisma client
-│   └── validation/       # Zod schemas
+│   ├── cloudinary.ts           # Cloudinary configuration
+│   ├── prisma.ts               # Prisma client with connection pooling
+│   └── validation/             # Zod validation schemas
+│       ├── article.schema.ts   # Article validation rules
+│       ├── reference-integrity.ts # Reference validation
+│       └── index.ts            # Validation exports
 ├── prisma/
-│   ├── schema.prisma     # Database schema
-│   └── migrations/       # Database migrations
+│   ├── schema.prisma           # Database schema
+│   └── migrations/             # Database migrations
 ├── scripts/
-│   └── seed-*.ts         # Database seeding scripts
-└── docs/                 # Documentation
+│   ├── seed-nine-blocks.ts     # Seed 九宮格 categories
+│   └── create-test-user.ts     # Create test admin user
+├── types/
+│   └── article.ts              # TypeScript type definitions
+└── docs/                       # Documentation
+    ├── CLOUDINARY_SETUP.md
+    ├── DATA_MODEL_RATIONALE.md
+    └── IMAGE_METADATA_STORAGE.md
 ```
 
 ## Documentation
 
 - **[Cloudinary Setup](docs/CLOUDINARY_SETUP.md)** - Complete guide for image upload integration
-- **[Validation Usage](VALIDATION_USAGE.md)** - Article validation patterns
+- **[Data Model Rationale](docs/DATA_MODEL_RATIONALE.md)** - Database design decisions
+- **[Image Metadata Storage](docs/IMAGE_METADATA_STORAGE.md)** - How images are stored and managed
+- **[Validation Usage](VALIDATION_USAGE.md)** - Article validation patterns and examples
 
 ## Technology Stack
 
-- **Frontend**: Next.js 16, React 19, TailwindCSS 4
-- **Backend**: Next.js API Routes, Prisma ORM
-- **Database**: PostgreSQL
+- **Frontend**: Next.js 16.1.1 (Turbopack), React 19, TailwindCSS 4
+- **Backend**: Next.js API Routes, Prisma ORM with PostgreSQL adapter
+- **Database**: PostgreSQL with connection pooling (pg)
 - **Image Storage**: Cloudinary CDN
-- **Validation**: Zod
-- **Authentication**: bcrypt + custom session
+- **Validation**: Zod schema validation
+- **Authentication**: bcrypt password hashing
+- **TypeScript**: Full type safety
 
 ## Development
 
