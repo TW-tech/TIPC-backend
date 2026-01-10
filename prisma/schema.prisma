@@ -304,6 +304,7 @@ model Video {
   id          String            @id @default(cuid())
   url         String
   title       String
+  mainImg     String
   description String
   keyWords    VideoKeyWord[]
   nineBlocks  VideoNineBlock[]
@@ -323,4 +324,88 @@ model archiveIndex {
   WebName   String
   OrgName   String
   OrgWebLink    String
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
 }
+
+model Partner {
+  id    Int    @id @default(autoincrement())
+  name  String
+  logo  String
+  webUrl  String
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+}
+
+model Book {
+  id        Int      @id @default(autoincrement())
+  authors   String[] 
+  bookname  String
+  publisher String
+  isbn      String
+  image     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ============================================================================
+// Event
+// ============================================================================
+
+model Event {
+  id          String       @id @default(cuid())
+  title       String
+  eventDate   DateTime     // The date of the event
+  mainImage   String       // Cover image URL
+  alt         String       // Alt text for main image
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  // Relations
+  blocks      EventBlock[]
+  images      EventImage[]
+
+  @@index([eventDate])
+  @@map("events")
+}
+
+// ============================================================================
+// Event block (for description content)
+// ============================================================================
+
+model EventBlock {
+  id        String    @id @default(cuid())
+  eventId   String
+  position  Int       // 0-indexed, determines display order
+  type      BlockType
+  data      Json      // Type-specific data (TextBlockData | ImageBlockData | QuoteBlockData)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  // Composite unique constraint: one position per event
+  @@unique([eventId, position])
+  @@index([eventId, position]) // Fast ordered retrieval
+  @@map("event_blocks")
+}
+
+// ============================================================================
+// Event related images
+// ============================================================================
+
+model EventImage {
+  id        String   @id @default(cuid())
+  eventId   String
+  src       String   // Image URL
+  position  Int      // Display order
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, position])
+  @@index([eventId, position]) // Fast ordered retrieval
+  @@map("event_images")
+}
+

@@ -388,7 +388,7 @@ export default function PhotographUploadPage() {
             disabled={isSaving}
             className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
-            {isSaving ? '儲存中...' : '儲存照片'}
+            {isSaving ? '上傳中...' : '上傳照片'}
           </button>
         </div>
       </div>
