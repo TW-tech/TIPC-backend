@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { Prisma } from '@prisma/client'
 
 // GET /api/articles/[id] - 獲取單篇文章
 export async function GET(
@@ -84,7 +85,7 @@ export async function PATCH(
     }
 
     // 使用 transaction 更新文章
-    const updatedArticle = await prisma.$transaction(async (tx) => {
+    const updatedArticle = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       // 1. 刪除舊的關聯資料
       await tx.articleBlock.deleteMany({ where: { articleId: id } })
       await tx.articleAnnotation.deleteMany({ where: { articleId: id } })
