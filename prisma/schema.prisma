@@ -57,7 +57,7 @@ model Users {
 
 model KeyWords {
   id          String              @id @default(cuid())
-  name        String
+  name        String              @unique
   articles    ArticleKeyWord[]
   videos      VideoKeyWord[]
 }
