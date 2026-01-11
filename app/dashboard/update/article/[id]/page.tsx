@@ -1343,6 +1343,9 @@ export default function UpdateArticlePage() {
                 + 新增
               </button>
             </div>
+            <div className="mb-3 text-sm text-gray-500">
+              請使用 YouTube 影片的嵌入連結格式，例如：https://www.youtube.com/embed/影片ID
+            </div>
             <div className="space-y-3">
               {videos.map((video, index) => (
                 <div key={index} className="border border-gray-300 rounded p-3 space-y-2">
@@ -1379,6 +1382,9 @@ export default function UpdateArticlePage() {
               >
                 + 新增
               </button>
+            </div>
+            <div className="mb-3 text-sm text-gray-500">
+              請使用 YouTube 影片的嵌入連結格式，例如：https://www.youtube.com/embed/影片ID
             </div>
             <div className="space-y-3">
               {podcasts.map((podcast, index) => (
