@@ -252,7 +252,7 @@ export default function DashboardPage() {
       } else if (a.type === 'event') {
         dateA = new Date((a as Event).eventDate)
       } else {
-        dateA = new Date(a.updatedAt)
+        dateA = a.updatedAt ? new Date(a.updatedAt) : new Date(0)
       }
 
       if (b.type === 'article') {
@@ -264,7 +264,7 @@ export default function DashboardPage() {
       } else if (b.type === 'event') {
         dateB = new Date((b as Event).eventDate)
       } else {
-        dateB = new Date(b.updatedAt)
+        dateB = b.updatedAt ? new Date(b.updatedAt) : new Date(0)
       }
 
       return sortOrder === 'desc' 
