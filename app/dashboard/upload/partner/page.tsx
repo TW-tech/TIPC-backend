@@ -59,6 +59,7 @@ export default function PartnerUploadPage() {
     try {
       const formData = new FormData()
       formData.append('file', logoFile)
+      formData.append('folder', 'partners')
 
       const response = await fetch('/api/upload-image', {
         method: 'POST',

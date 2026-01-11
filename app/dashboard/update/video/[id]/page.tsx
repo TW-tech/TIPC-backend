@@ -232,6 +232,7 @@ export default function UpdateVideoPage() {
     try {
       const formData = new FormData()
       formData.append('file', file)
+      formData.append('folder', 'videos')
 
       const response = await fetch('/api/upload-image', {
         method: 'POST',
@@ -264,7 +265,6 @@ export default function UpdateVideoPage() {
     if (!videoDate) newErrors.push('影片日期為必填')
     if (!coverImage.trim()) newErrors.push('封面照片為必填')
     if (selectedKeyWords.length === 0 && newKeywords.length === 0) newErrors.push('請至少選擇一個關鍵字')
-    if (selectedNineBlocks.length === 0) newErrors.push('請至少選擇一個九宮格分類')
     if (selectedCakeCategories.length === 0) newErrors.push('請至少選擇一個蛋糕圖分類')
 
     setErrors(newErrors)

@@ -122,13 +122,6 @@ export async function PUT(
       )
     }
 
-    if (!nineBlockIds || nineBlockIds.length === 0) {
-      return NextResponse.json(
-        { success: false, error: '請至少選擇一個九宮格分類' },
-        { status: 400 }
-      )
-    }
-
     // 檢查照片是否存在
     const existingPhotograph = await prisma.photograph.findUnique({
       where: { id },

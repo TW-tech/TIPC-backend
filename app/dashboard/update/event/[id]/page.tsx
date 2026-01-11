@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
 interface TextBlock {
@@ -15,23 +15,88 @@ interface RelatedImage {
   position: number
 }
 
-export default function EventUploadPage() {
+interface EventData {
+  id: string
+  title: string
+  eventDate: string
+  mainImage: string
+  alt: string
+  blocks: Array<{
+    id: string
+    position: number
+    type: string
+    data: { content: string }
+  }>
+  images: Array<{
+    id: string
+    src: string
+    position: number
+  }>
+}
+
+export default function EventUpdatePage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter()
+  const [eventId, setEventId] = useState<string>('')
 
   // Form state
   const [title, setTitle] = useState('')
   const [eventDate, setEventDate] = useState('')
   const [mainImage, setMainImage] = useState('')
   const [alt, setAlt] = useState('')
-  const [textBlocks, setTextBlocks] = useState<TextBlock[]>([
-    { id: crypto.randomUUID(), content: '', position: 0 }
-  ])
+  const [textBlocks, setTextBlocks] = useState<TextBlock[]>([])
   const [relatedImages, setRelatedImages] = useState<RelatedImage[]>([])
 
   // UI state
   const [uploadingMainImage, setUploadingMainImage] = useState(false)
   const [uploadingRelatedImage, setUploadingRelatedImage] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchEventData = async () => {
+      try {
+        const resolvedParams = await params
+        setEventId(resolvedParams.id)
+        
+        const response = await fetch(`/api/events/${resolvedParams.id}`)
+        if (!response.ok) throw new Error('Failed to fetch event')
+        
+        const event: EventData = await response.json()
+        
+        // Set form data
+        setTitle(event.title)
+        setEventDate(event.eventDate.split('T')[0]) // Convert to YYYY-MM-DD format
+        setMainImage(event.mainImage)
+        setAlt(event.alt)
+        
+        // Convert blocks to TextBlock format
+        setTextBlocks(
+          event.blocks.map((block) => ({
+            id: block.id,
+            content: block.data.content,
+            position: block.position
+          }))
+        )
+        
+        // Convert images to RelatedImage format
+        setRelatedImages(
+          event.images.map((img) => ({
+            id: img.id,
+            src: img.src,
+            position: img.position
+          }))
+        )
+      } catch (error) {
+        console.error('Error fetching event:', error)
+        alert('載入活動資料失敗')
+        router.push('/dashboard')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchEventData()
+  }, [params, router])
 
   // Handle main image upload
   const handleMainImageUpload = async (file: File) => {
@@ -171,30 +236,38 @@ export default function EventUploadPage() {
         }))
       }
 
-      const response = await fetch('/api/events', {
-        method: 'POST',
+      const response = await fetch(`/api/events/${eventId}`, {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(eventData),
       })
 
-      if (!response.ok) throw new Error('上傳失敗')
+      if (!response.ok) throw new Error('更新失敗')
 
-      alert('活動上傳成功！')
+      alert('活動更新成功！')
       router.push('/dashboard')
     } catch (error) {
-      console.error('Upload error:', error)
-      alert('上傳失敗，請重試')
+      console.error('Update error:', error)
+      alert('更新失敗，請重試')
     } finally {
       setIsSubmitting(false)
     }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-gray-500">載入中...</div>
+      </div>
+    )
   }
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">上傳活動</h1>
-          <p className="mt-2 text-gray-600">填寫活動資訊並上傳相關圖片</p>
+          <h1 className="text-3xl font-bold text-gray-900">更新活動</h1>
+          <p className="mt-2 text-gray-600">修改活動資訊</p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-6 space-y-6">
@@ -396,7 +469,7 @@ export default function EventUploadPage() {
               取消
             </button>
             <button type="submit" disabled={isSubmitting} className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed">
-              {isSubmitting ? '上傳中...' : '上傳活動'}
+              {isSubmitting ? '更新中...' : '更新活動'}
             </button>
           </div>
         </form>

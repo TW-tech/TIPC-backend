@@ -48,6 +48,7 @@ export default function UpdateArticlePage() {
   
   // 文章基本資訊
   const [title, setTitle] = useState('')
+  const [englishTitle, setEnglishTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [slug, setSlug] = useState('')
   const [coverImage, setCoverImage] = useState('') // 封面照片
@@ -117,6 +118,7 @@ export default function UpdateArticlePage() {
           
           // 填充基本資訊
           setTitle(article.title || '')
+          setEnglishTitle(article.englishTitle || '')
           setAuthor(article.author || '')
           setSlug(article.slug || '')
           setCoverImage(article.coverImage || '')
@@ -277,6 +279,7 @@ export default function UpdateArticlePage() {
     try {
       const formData = new FormData()
       formData.append('file', file)
+      formData.append('folder', 'articles')
 
       const response = await fetch('/api/upload-image', {
         method: 'POST',
@@ -314,6 +317,7 @@ export default function UpdateArticlePage() {
     try {
       const formData = new FormData()
       formData.append('file', file)
+      formData.append('folder', 'articles')
 
       const response = await fetch('/api/upload-image', {
         method: 'POST',
@@ -486,7 +490,6 @@ export default function UpdateArticlePage() {
     if (!author.trim()) validationErrors.push('作者為必填')
     if (!slug.trim()) validationErrors.push('Slug 為必填')
     if (!coverImage.trim()) validationErrors.push('封面照片為必填')
-    if (selectedNineBlocks.length === 0) validationErrors.push('請至少選擇一個九宮格分類')
     if (!selectedCakeCategory) validationErrors.push('請選擇蛋糕圖分類')
     if (selectedKeywords.length === 0 && newKeywords.length === 0) validationErrors.push('請至少選擇或新增一個關鍵字')
 
@@ -504,6 +507,7 @@ export default function UpdateArticlePage() {
       const articleData = {
         author,
         title,
+        englishTitle: englishTitle.trim() || null,
         coverImage,
         slug: slug,
         cakeCategoryId: selectedCakeCategory,
@@ -608,6 +612,16 @@ export default function UpdateArticlePage() {
                 onChange={(e) => setTitle(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900 min-h-[120px]"
                 placeholder="輸入文章標題"
+                />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">英文標題 (選填)</label>
+              <textarea
+                value={englishTitle}
+                onChange={(e) => setEnglishTitle(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900 min-h-[120px]"
+                placeholder="Enter article title in English"
                 />
             </div>
             

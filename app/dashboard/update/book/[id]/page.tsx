@@ -68,6 +68,7 @@ export default function BookUpdatePage({ params }: { params: Promise<{ id: strin
     try {
       const formData = new FormData()
       formData.append('file', file)
+      formData.append('folder', 'books')
 
       const response = await fetch('/api/upload-image', {
         method: 'POST',

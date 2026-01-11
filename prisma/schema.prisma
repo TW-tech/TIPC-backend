@@ -175,6 +175,7 @@ model VideoCakeCategory {
 
 model Article {
   id          String             @id @default(cuid())
+  englishTitle  String?
   title       String
   author      String
   coverImage  String             // 封面照片 URL (required)

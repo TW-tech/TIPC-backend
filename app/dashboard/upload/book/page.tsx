@@ -24,6 +24,7 @@ export default function BookUploadPage() {
     try {
       const formData = new FormData()
       formData.append('file', file)
+      formData.append('folder', 'books')
 
       const response = await fetch('/api/upload-image', {
         method: 'POST',
@@ -270,7 +271,7 @@ export default function BookUploadPage() {
                     <p className="mb-2 text-sm text-gray-700 font-medium">
                       <span className="text-blue-600">點擊上傳封面圖片</span> 或拖曳檔案至此
                     </p>
-                    <p className="text-xs text-gray-500">支援 JPG（最大 5MB）</p>
+                    <p className="text-xs text-gray-500">支援 JPG, PNG（最大 5MB）</p>
                   </>
                 )}
               </label>

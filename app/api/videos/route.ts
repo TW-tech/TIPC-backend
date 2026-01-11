@@ -36,13 +36,6 @@ export async function POST(request: Request) {
       )
     }
 
-    if (!nineBlockIds || nineBlockIds.length === 0) {
-      return NextResponse.json(
-        { success: false, error: '請至少選擇一個九宮格分類' },
-        { status: 400 }
-      )
-    }
-
     if (!cakeCategoryIds || cakeCategoryIds.length === 0) {
       return NextResponse.json(
         { success: false, error: '請至少選擇一個蛋糕圖分類' },

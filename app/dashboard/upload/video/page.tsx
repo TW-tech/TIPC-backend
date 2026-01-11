@@ -151,6 +151,7 @@ export default function VideoUploadPage() {
     try {
       const formData = new FormData()
       formData.append('file', file)
+      formData.append('folder', 'videos')
 
       const response = await fetch('/api/upload-image', {
         method: 'POST',
@@ -171,6 +172,12 @@ export default function VideoUploadPage() {
     }
   }
 
+  // 計算不含標點符號的字數
+  const countWithoutPunctuation = (text: string): number => {
+    // 移除所有標點符號（中英文）
+    return text.replace(/[\p{P}\p{S}\s]/gu, '').length
+  }
+
   // 表單驗證
   const validateForm = () => {
     const newErrors: string[] = []
@@ -178,12 +185,11 @@ export default function VideoUploadPage() {
     if (!url.trim()) newErrors.push('影片連結為必填')
     if (!title.trim()) newErrors.push('標題為必填')
     if (!description.trim()) newErrors.push('說明為必填')
-    if (description.length > 40) newErrors.push('說明不可超過40字')
+    if (countWithoutPunctuation(description) > 100) newErrors.push('說明不可超過100字（不含標點符號）')
     if (!author.trim()) newErrors.push('作者為必填')
     if (!videoDate) newErrors.push('影片日期為必填')
     if (!coverImage.trim()) newErrors.push('封面照片為必填')
     if (selectedKeyWords.length === 0 && newKeywords.length === 0) newErrors.push('請至少選擇一個關鍵字')
-    if (selectedNineBlocks.length === 0) newErrors.push('請至少選擇一個九宮格分類')
     if (selectedCakeCategories.length === 0) newErrors.push('請至少選擇一個蛋糕圖分類')
 
     setErrors(newErrors)
@@ -391,16 +397,15 @@ export default function VideoUploadPage() {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               說明 <span className="text-red-500">*</span>
               <span className="text-sm text-gray-500 ml-2">
-                ({description.length}/40 字)
+                ({countWithoutPunctuation(description)}/100 字，不含標點符號)
               </span>
             </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              maxLength={40}
               rows={3}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-              placeholder="請輸入影片說明（限40字以內）"
+              placeholder="請輸入影片說明（限100字以內，不含標點符號）"
             />
           </div>
 

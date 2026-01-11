@@ -69,6 +69,7 @@ export default function PhotographUploadPage() {
     try {
       const formData = new FormData()
       formData.append('file', file)
+      formData.append('folder', 'photographs')
 
       const response = await fetch('/api/upload-image', {
         method: 'POST',
@@ -101,7 +102,6 @@ export default function PhotographUploadPage() {
     if (!description.trim()) validationErrors.push('說明為必填')
     if (!author.trim()) validationErrors.push('作者為必填')
     if (!photoDate.trim()) validationErrors.push('拍攝日期為必填')
-    if (selectedNineBlocks.length === 0) validationErrors.push('請至少選擇一個九宮格分類')
 
     if (validationErrors.length > 0) {
       setErrors(validationErrors)

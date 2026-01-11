@@ -5,6 +5,7 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData()
     const file = formData.get('file') as File
+    const folder = formData.get('folder') as string
     
     if (!file) {
       return NextResponse.json(
@@ -43,7 +44,7 @@ export async function POST(request: NextRequest) {
     }>((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
         {
-          folder: 'TIPC/articles', // 在 Cloudinary 中的資料夾
+          folder: `TIPC/${folder}`, // Dynamic folder based on upload source
           resource_type: 'image',
           transformation: [
             { quality: 'auto', fetch_format: 'auto' } // 自動優化
