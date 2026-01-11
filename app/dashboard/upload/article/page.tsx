@@ -51,6 +51,7 @@ export default function ArticleEditorPage() {
   const [selectedCakeCategory, setSelectedCakeCategory] = useState<string[]>([])
   const [selectedNineBlocks, setSelectedNineBlocks] = useState<string[]>([])
   const [selectedKeywords, setSelectedKeywords] = useState<string[]>([])
+  const [allKeywords, setAllKeywords] = useState<Keyword[]>([]) // 所有可用的關鍵字
   const [newKeywords, setNewKeywords] = useState<string[]>([]) // 新增的關鍵字
   const [newKeywordInput, setNewKeywordInput] = useState('') // 輸入框
   const [keywordSuggestions, setKeywordSuggestions] = useState<Keyword[]>([]) // 自動完成建議
@@ -90,6 +91,7 @@ export default function ArticleEditorPage() {
         if (result.success) {
           setNineBlockOptions(result.data.nineBlocks)
           setCakeCategoryOptions(result.data.cakeCategories)
+          setAllKeywords(result.data.keywords || [])
         }
       } catch (error) {
         console.error('Failed to fetch metadata:', error)

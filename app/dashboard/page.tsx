@@ -218,7 +218,7 @@ export default function DashboardPage() {
           ? (item as Partner).name.toLowerCase()
           : item.type === 'book'
           ? (item as Book).bookname.toLowerCase()
-          : item.title.toLowerCase()
+          : (item as Article | Photograph | Video | Event).title.toLowerCase()
         
         return title.includes(searchTitle.toLowerCase())
       })
@@ -235,7 +235,7 @@ export default function DashboardPage() {
             author.toLowerCase().includes(searchAuthor.toLowerCase())
           )
         }
-        return item.author.toLowerCase().includes(searchAuthor.toLowerCase())
+        return (item as Article | Photograph | Video).author.toLowerCase().includes(searchAuthor.toLowerCase())
       })
     }
 
@@ -244,7 +244,7 @@ export default function DashboardPage() {
       let dateA: Date, dateB: Date
 
       if (a.type === 'article') {
-        dateA = new Date((a as Article).publishedAt || a.updatedAt)
+        dateA = new Date((a as Article).publishedAt || (a as Article).updatedAt || 0)
       } else if (a.type === 'photograph') {
         dateA = new Date((a as Photograph).photoDate)
       } else if (a.type === 'video') {
@@ -256,7 +256,7 @@ export default function DashboardPage() {
       }
 
       if (b.type === 'article') {
-        dateB = new Date((b as Article).publishedAt || b.updatedAt)
+        dateB = new Date((b as Article).publishedAt || (b as Article).updatedAt || 0)
       } else if (b.type === 'photograph') {
         dateB = new Date((b as Photograph).photoDate)
       } else if (b.type === 'video') {
@@ -642,7 +642,7 @@ export default function DashboardPage() {
                       ) : item.type === 'event' ? (
                         <div className="text-sm font-medium text-gray-900 truncate">{(item as Event).title}</div>
                       ) : (
-                        <div className="text-sm font-medium text-gray-900 truncate">{item.title}</div>
+                        <div className="text-sm font-medium text-gray-900 truncate">{(item as Article | Photograph | Video).title}</div>
                       )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -651,7 +651,7 @@ export default function DashboardPage() {
                           ? '-' 
                           : item.type === 'book'
                           ? (item as Book).authors.join(', ')
-                          : item.author}
+                          : (item as Article | Photograph | Video).author}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -669,7 +669,7 @@ export default function DashboardPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{formatDate(item.updatedAt)}</div>
+                      <div className="text-sm text-gray-900">{item.updatedAt ? formatDate(item.updatedAt) : '-'}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex items-center justify-end gap-2">
@@ -683,7 +683,7 @@ export default function DashboardPage() {
                             </button>
                             {userRole === 'admin' && (
                               <button
-                                onClick={() => deleteArticle(item.id, item.title)}
+                                onClick={() => deleteArticle(String(item.id), (item as Article).title)}
                                 className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
                               >
                                 刪除
@@ -700,7 +700,7 @@ export default function DashboardPage() {
                             </button>
                             {userRole === 'admin' && (
                               <button
-                                onClick={() => deletePhotograph(item.id, item.title)}
+                                onClick={() => deletePhotograph(String(item.id), (item as Photograph).title)}
                                 className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
                               >
                                 刪除
@@ -717,7 +717,7 @@ export default function DashboardPage() {
                             </button>
                             {userRole === 'admin' && (
                               <button
-                                onClick={() => deleteVideo(item.id, item.title)}
+                                onClick={() => deleteVideo(String(item.id), (item as Video).title)}
                                 className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
                               >
                                 刪除

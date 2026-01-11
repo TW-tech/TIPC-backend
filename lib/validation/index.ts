@@ -38,7 +38,7 @@ export function validateCreateArticle(
   
   if (!zodResult.success) {
     console.error('Zod validation failed:', zodResult.error)
-    const zodErrors = zodResult.error?.errors?.map(err => 
+    const zodErrors = zodResult.error?.issues?.map(err => 
       `${err.path.join('.')}: ${err.message}`
     )
     if (zodErrors && zodErrors.length > 0) {
@@ -64,7 +64,7 @@ export function validateCreateArticle(
     })
     
     if (!blockDataResult.success) {
-      const blockErrors = blockDataResult.error.errors.map(err =>
+      const blockErrors = blockDataResult.error.issues.map(err =>
         `blocks[${i}].${err.path.join('.')}: ${err.message}`
       )
       errors.push(...blockErrors)
@@ -74,7 +74,7 @@ export function validateCreateArticle(
   // Step 3: Reference 完整性檢查
   const refIntegrityResult = validateReferenceIntegrity(
     data.blocks,
-    data.annotations
+    data.annotations || []
   )
   
   if (!refIntegrityResult.valid) {
@@ -102,7 +102,7 @@ export function validateUpdateArticle(
   const zodResult = UpdateArticleSchema.safeParse(input)
   
   if (!zodResult.success) {
-    const zodErrors = zodResult.error.errors.map(err =>
+    const zodErrors = zodResult.error.issues.map(err =>
       `${err.path.join('.')}: ${err.message}`
     )
     errors.push(...zodErrors)
@@ -125,7 +125,7 @@ export function validateUpdateArticle(
       })
       
       if (!blockDataResult.success) {
-        const blockErrors = blockDataResult.error.errors.map(err =>
+        const blockErrors = blockDataResult.error.issues.map(err =>
           `blocks[${i}].${err.path.join('.')}: ${err.message}`
         )
         errors.push(...blockErrors)
