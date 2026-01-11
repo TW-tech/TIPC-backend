@@ -361,6 +361,7 @@ model Event {
   alt         String       // Alt text for main image
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
+  showInImgCarousel Boolean   @default(false)
 
   // Relations
   blocks      EventBlock[]
