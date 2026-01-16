@@ -147,6 +147,16 @@ export default function DashboardLayout({
             </svg>
             設定首頁圖片跑馬燈
           </button>
+           <button
+            onClick={() => router.push('/dashboard/setUpSelection')}
+            className="w-full flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors font-medium mb-2"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
+              <path d="M5.5 7a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
+            </svg>
+            設定首頁影響力精選
+          </button>
         </nav>
 
         {/* Logout Button - At bottom */}

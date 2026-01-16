@@ -162,6 +162,7 @@ export interface Podcast {
 export interface Article {
   id: string;
   title: string;
+  englishTitle?: string;
   slug: string; // URL-friendly identifier
   summary?: string;
   publishedAt?: Date;

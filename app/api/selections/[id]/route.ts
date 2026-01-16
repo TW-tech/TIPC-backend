@@ -112,6 +112,7 @@ export async function PATCH(
         data: {
           author: body.author,
           title: body.title,
+          englishTitle: body.englishTitle,
           coverImage: body.coverImage,
           slug: body.slug,
           // publishedAt 不更新，保持原有值

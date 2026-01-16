@@ -110,7 +110,7 @@ export default function UpdateSelectionPage() {
           setSlug(selection.slug || '')
           setCoverImage(selection.coverImage || '')
           setUrl(selection.url || '')
-          setSelectionDate(selection.date || '')
+          setSelectionDate(selection.date.split('T')[0] || '')
           setNation(selection.nation || '')
 
           // 填充 blocks

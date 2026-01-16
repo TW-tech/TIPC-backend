@@ -3,57 +3,55 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
-interface Event {
-  id: string
-  title: string
-  eventDate: string
-  mainImage: string
-  alt: string
-  showInImgCarousel: boolean
-  createdAt: string
-  updatedAt: string
+interface Selection {
+  id:string;
+  englishTitle?:string;
+  title: string;
+  author:string;
+  createdAt: string;
+  setUpSelection: boolean;
 }
 
-export default function SetUpImgCarouselPage() {
+export default function SetUpSelectionPage() {
   const router = useRouter()
-  const [events, setEvents] = useState<Event[]>([])
+  const [selections, setSelections] = useState<Selection[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [updatingId, setUpdatingId] = useState<string | null>(null)
 
   useEffect(() => {
-    fetchEvents()
+    fetchSelections()
   }, [])
 
-  const fetchEvents = async () => {
+  const fetchSelections = async () => {
     try {
-      const response = await fetch('/api/events')
+      const response = await fetch('/api/selections')
       
       if (!response.ok) {
         const error = await response.json()
-        alert('載入活動失敗：' + (error.error || '未知錯誤'))
+        alert('載入影響力精選失敗：' + (error.error || '未知錯誤'))
         return
       }
       
-      const events = await response.json()
-      setEvents(events)
+      const data = await response.json()
+      setSelections(data.data)
     } catch (error) {
-      console.error('Failed to fetch events:', error)
-      alert('載入活動失敗')
+      console.error('Failed to fetch selections:', error)
+      alert('載入影響力精選失敗')
     } finally {
       setIsLoading(false)
     }
   }
 
-  const handleCarouselToggle = async (eventId: string, currentValue: boolean) => {
-    setUpdatingId(eventId)
+  const handleMainPageToggle = async (selectionId: string, currentValue: boolean) => {
+    setUpdatingId(selectionId)
     try {
-      const response = await fetch(`/api/events/${eventId}/carousel`, {
+      const response = await fetch(`/api/selections/${selectionId}/mainPage`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          showInImgCarousel: !currentValue
+          setUpSelection: !currentValue
         })
       })
 
@@ -61,16 +59,16 @@ export default function SetUpImgCarouselPage() {
 
       if (result.success) {
         // Update local state
-        setEvents(events.map(event => 
-          event.id === eventId 
-            ? { ...event, showInImgCarousel: !currentValue }
-            : event
+        setSelections(selections.map(selection => 
+          selection.id === selectionId 
+            ? { ...selection, setUpSelection: !currentValue }
+            : selection
         ))
       } else {
         alert('更新失敗：' + result.error)
       }
     } catch (error) {
-      console.error('Failed to update carousel status:', error)
+      console.error('Failed to update selection status:', error)
       alert('更新失敗')
     } finally {
       setUpdatingId(null)
@@ -93,17 +91,17 @@ export default function SetUpImgCarouselPage() {
     )
   }
 
-  const carouselCount = events.filter(e => e.showInImgCarousel).length
+  const selectionCount = selections.filter(e => e.setUpSelection).length
   return (
     <div className="p-8">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">設定首頁圖片跑馬燈</h1>
+          <h1 className="text-3xl font-bold text-gray-900">設定首頁影響力精選</h1>
           <p className="mt-2 text-gray-600">
-            勾選活動以顯示在前台網站首頁的圖片跑馬燈區塊（最多 4 個）
+            勾選活動以顯示在前台網站首頁的影響力精選區塊（最多 3 個）
           </p>
           <div className="mt-3 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-            已選擇：{carouselCount} / 4
+            已選擇：{selectionCount} / 3
           </div>
         </div>
 
@@ -113,16 +111,16 @@ export default function SetUpImgCarouselPage() {
               <thead className="bg-gray-50">
                 <tr>
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    顯示於跑馬燈
+                    顯示於首頁
                   </th>
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    活動標題
+                    標題
                   </th>
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    活動日期
+                    作者
                   </th>
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    封面圖片
+                    日期
                   </th>
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     建立時間
@@ -130,44 +128,37 @@ export default function SetUpImgCarouselPage() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {events.length === 0 ? (
+                {selections.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
-                      目前沒有活動
+                      目前沒有影響力精選內容
                     </td>
                   </tr>
                 ) : (
-                  events.map((event) => (
-                    <tr key={event.id} className="hover:bg-gray-50">
+                  selections.map((selection) => (
+                    <tr key={selection.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <input
                           type="checkbox"
-                          checked={event.showInImgCarousel}
-                          onChange={() => handleCarouselToggle(event.id, event.showInImgCarousel)}
-                          disabled={updatingId === event.id}
+                          checked={selection.setUpSelection}
+                          onChange={() => handleMainPageToggle(selection.id, selection.setUpSelection)}
+                          disabled={updatingId === selection.id}
                           className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer disabled:opacity-50"
                         />
                       </td>
                       <td className="px-6 py-4">
                         <div className="text-sm font-medium text-gray-900">
-                          {event.title}
+                          {selection.title}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">
-                          {formatDate(event.eventDate)}
+                          {selection.author}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <img
-                          src={event.mainImage}
-                          alt={event.alt}
-                          className="h-16 w-24 object-cover rounded"
-                        />
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-500">
-                          {formatDate(event.createdAt)}
+                          {formatDate(selection.createdAt)}
                         </div>
                       </td>
                     </tr>
@@ -178,10 +169,10 @@ export default function SetUpImgCarouselPage() {
           </div>
         </div>
 
-        {events.length > 0 && (
+        {selections.length > 0 && (
           <div className="mt-4 text-sm text-gray-600">
-            總共 {events.length} 個活動，
-            {events.filter(e => e.showInImgCarousel).length} 個顯示於跑馬燈
+            總共 {selections.length} 個活動，
+            {selections.filter(e => e.setUpSelection).length} 個顯示於首頁
           </div>
         )}
       </div>
