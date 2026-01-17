@@ -972,8 +972,7 @@ export default function SelectionEditorPage() {
                                                 </div>
                                                 <div>
                                                     <label className="block text-sm font-medium text-gray-700 mb-1">Caption（可包含引用）</label>
-                                                    <input
-                                                        type="text"
+                                                    <textarea
                                                         value={block.data.caption || ''}
                                                         onChange={(e) => updateBlock(index, { ...block.data, caption: e.target.value })}
                                                         onSelect={(e) => {
@@ -997,7 +996,7 @@ export default function SelectionEditorPage() {
                                                                 [`${block.id}-caption`]: target.selectionStart || 0
                                                             })
                                                         }}
-                                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
+                                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900 min-h-[120px]"
                                                         placeholder="圖片說明，可使用 [1] 格式插入引用"
                                                     />
                                                     <div className="mt-2">
