@@ -621,7 +621,7 @@ export default function DashboardPage() {
             <table className="min-w-full divide-y divide-gray-200 table-fixed">
               <colgroup>
                 <col style={{ width: '120px' }} />
-                <col style={{ width: 'auto', minWidth: '200px' }} />
+                <col style={{ width: '150px' }} />
                 <col style={{ width: '150px' }} />
                 <col style={{ width: '130px' }} />
                 <col style={{ width: '130px' }} />
@@ -687,7 +687,7 @@ export default function DashboardPage() {
                         </span>
                       ) : null}
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 max-w-[350px]">
                       {item.type === 'archive' ? (
                         <div className="text-sm font-medium text-gray-900 truncate">{(item as Archive).WebName}</div>
                       ) : item.type === 'partner' ? (

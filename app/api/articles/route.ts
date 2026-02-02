@@ -222,15 +222,15 @@ export async function POST(request: NextRequest) {
  */
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url)
-    const page = parseInt(searchParams.get('page') || '1', 10)
-    const limit = parseInt(searchParams.get('limit') || '10', 10)
-    const skip = (page - 1) * limit
+    //const { searchParams } = new URL(request.url)
+    //const page = parseInt(searchParams.get('page') || '1', 10)
+    //const limit = parseInt(searchParams.get('limit') || '10', 10)
+    //const skip = (page - 1) * limit
     
     const [articles, total] = await Promise.all([
       prisma.article.findMany({
-        skip,
-        take: limit,
+        //skip,
+        //take: limit,
         orderBy: { createdAt: 'desc' },
         include: {
           blocks: {
@@ -259,12 +259,12 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: articles,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-      },
+      //pagination: {
+      //  page,
+        //limit,
+      //  total,
+        //totalPages: Math.ceil(total / limit),
+      //},
     })
     
   } catch (error) {

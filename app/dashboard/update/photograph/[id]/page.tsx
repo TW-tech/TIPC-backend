@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
+import { set } from 'zod'
 
 interface NineBlock {
   id: string
@@ -25,7 +26,7 @@ export default function UpdatePhotographPage() {
   const [author, setAuthor] = useState('')
   const [photoDate, setPhotoDate] = useState('')
   const [selectedNineBlocks, setSelectedNineBlocks] = useState<string[]>([])
-  const [fixedCakeCategoryId, setFixedCakeCategoryId] = useState<string>('')
+  const [selectedCakeCategory, setSelectedCakeCategory] = useState<string[]>([])
   
   // 元數據選項
   const [nineBlockOptions, setNineBlockOptions] = useState<NineBlock[]>([])
@@ -47,14 +48,6 @@ export default function UpdatePhotographPage() {
         if (result.success) {
           setNineBlockOptions(result.data.nineBlocks)
           setCakeCategoryOptions(result.data.cakeCategories)
-          
-          // 找到「文化記憶」
-          const culturalMemory = result.data.cakeCategories.find(
-            (cat: CakeCategory) => cat.name === '文化記憶'
-          )
-          if (culturalMemory) {
-            setFixedCakeCategoryId(culturalMemory.id)
-          }
         }
       } catch (error) {
         console.error('Failed to fetch metadata:', error)
@@ -83,6 +76,11 @@ export default function UpdatePhotographPage() {
           // 設定已選擇的九宮格
           if (photo.nineBlocks) {
             setSelectedNineBlocks(photo.nineBlocks.map((nb: any) => nb.nineBlockId))
+          }
+          
+          // 設定已選擇的蛋糕圖分類
+          if (photo.cakeCategory) {
+            setSelectedCakeCategory(photo.cakeCategory.map((cc: any) => cc.cakeCategoryId))
           }
         } else {
           alert('載入照片失敗：' + result.error)
@@ -156,7 +154,7 @@ export default function UpdatePhotographPage() {
         description,
         author,
         photoDate: new Date(photoDate).toISOString(),
-        cakeCategoryIds: [fixedCakeCategoryId],
+        cakeCategoryIds: selectedCakeCategory,
         nineBlockIds: selectedNineBlocks,
       }
 
@@ -385,40 +383,36 @@ export default function UpdatePhotographPage() {
               )}
             </div>
 
-            {/* 蛋糕圖分類（固定為文化記憶） */}
+            {/* 蛋糕圖分類 */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                蛋糕圖分類 * <span className="text-xs text-gray-500">(照片固定為「文化記憶」)</span>
+                蛋糕圖分類 * {selectedCakeCategory.length > 0 && `(已選 ${selectedCakeCategory.length} 項)`}
               </label>
               {isLoadingMetadata ? (
                 <div className="text-gray-500 text-sm">載入中...</div>
               ) : (
-                <div className="border border-gray-300 rounded-lg p-4 bg-gray-50">
+                <div className="border border-gray-300 rounded-lg p-4">
                   {!cakeCategoryOptions || cakeCategoryOptions.length === 0 ? (
                     <p className="text-gray-500 text-sm">無可用選項</p>
                   ) : (
                     <div className="grid grid-cols-3 gap-3">
-                      {cakeCategoryOptions.map((option) => {
-                        const isCulturalMemory = option.name === '文化記憶'
-                        return (
-                          <label 
-                            key={option.id} 
-                            className={`flex items-center space-x-2 p-2 rounded ${
-                              isCulturalMemory ? 'bg-blue-50' : 'opacity-50'
-                            }`}
-                          >
-                            <input
-                              type="checkbox"
-                              checked={isCulturalMemory}
-                              disabled={true}
-                              className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
-                            />
-                            <span className={`${isCulturalMemory ? 'text-blue-900 font-medium' : 'text-gray-500'}`}>
-                              {option.name}
-                            </span>
-                          </label>
-                        )
-                      })}
+                      {cakeCategoryOptions.map((option) => (
+                        <label key={option.id} className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded">
+                          <input
+                            type="checkbox"
+                            checked={selectedCakeCategory.includes(option.id)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedCakeCategory([...selectedCakeCategory, option.id])
+                              } else {
+                                setSelectedCakeCategory(selectedCakeCategory.filter(id => id !== option.id))
+                              }
+                            }}
+                            className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                          />
+                          <span className="text-gray-700">{option.name}</span>
+                        </label>
+                      ))}
                     </div>
                   )}
                 </div>
