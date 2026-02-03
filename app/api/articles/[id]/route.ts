@@ -22,6 +22,7 @@ export async function GET(
         videos: true,
         podcasts: true,
         keyWords: {
+          orderBy: { position: 'desc' },
           include: {
             keyWord: true,
           },
@@ -176,10 +177,11 @@ export async function PATCH(
             })),
           } : undefined,
           keyWords: {
-            create: allKeywordIds.map((keywordId: string) => ({
+            create: allKeywordIds.map((keywordId: string, index: number) => ({
               keyWord: {
                 connect: { id: keywordId },
               },
+              position: allKeywordIds.length - 1 - index, // 反向順序：第一個加入的關鍵字顯示在最前面
             })),
           },
           nineBlocks: body.nineBlockIds && body.nineBlockIds.length > 0 ? {
@@ -207,6 +209,7 @@ export async function PATCH(
           videos: true,
           podcasts: true,
           keyWords: {
+            orderBy: { position: 'desc' },
             include: {
               keyWord: true,
             },

@@ -95,6 +95,7 @@ model ArticleCakeCategory {
 model ArticleKeyWord {
   articleId String
   keyWordId String
+  position  Int      @default(0)
   article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
   keyWord   KeyWords @relation(fields: [keyWordId], references: [id], onDelete: Cascade)
 
